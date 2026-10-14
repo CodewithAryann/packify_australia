@@ -1,0 +1,12 @@
+export const homepageFaqs = [
+  { question: 'What is your minimum order quantity (MOQ)?', answer: 'We have no minimum order. Order from 1 unit, useful for prototypes, samples, and small batches. We also accommodate wholesale and bulk orders.' },
+  { question: 'Do you charge for dies or plates?', answer: 'No. We do not charge die or plate fees. The price in your quote includes setup. No hidden charges. The quoted price is what you pay.' },
+  { question: 'Do you offer free design support?', answer: 'Yes. Our designers help with artwork preparation, file checks, and layout. We review your files for print readiness and can assist with dieline setup. Design support is included at no extra cost.' },
+  { question: 'Can I get samples before ordering?', answer: 'Yes. Samples are available on request so you can check quality, material, and finish. Sample costs are typically credited if you place an order within 30 days. Contact us to request samples.' },
+  { question: 'Can I provide my own artwork?', answer: 'Yes. Submit your logo and artwork. We accept AI, EPS, PDF (vector preferred) or high-res PSD/PNG (300 DPI). Our team will review for bleed, safe zone, and print readiness. See our artwork guidelines for specs.' },
+  { question: 'Can you print on the inside of the box?', answer: 'Yes. Interior printing is available on mailer boxes and other styles. Pricing depends on coverage. Many e-commerce and subscription brands use interior printing for a branded unboxing experience.' },
+  { question: 'What affects custom box pricing?', answer: 'Pricing depends on material (kraft, corrugated, rigid), dimensions, box style, print coverage (1-side vs full-color), and quantity. Bulk orders get wholesale pricing. Request a quote for an accurate price.' },
+  { question: 'How long does production take?', answer: 'Production typically takes 8–10 business days after proof approval. Delivery adds 3–4 days within Australia. Rush production (4–5 business days) is available for urgent orders.' },
+  { question: 'Do you ship outside Australia?', answer: 'Yes. We ship worldwide. International rates and lead times vary. Ensure your box meets size and weight limits for your chosen carrier. Contact us for a shipping quote.' },
+  { question: 'What materials do you use for custom boxes?', answer: 'We use kraft paper, corrugated cardboard, paperboard (SBS), and rigid chipboard. Materials are recyclable. We help you choose based on product weight, protection needs, and brand aesthetic.' },
+]

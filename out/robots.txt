@@ -1,0 +1,8 @@
+# robots.txt for packifycustomboxes.com.au
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+
+Sitemap: https://packifycustomboxes.com.au/sitemap.xml

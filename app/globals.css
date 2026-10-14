@@ -1,0 +1,290 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #ffffff;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .animate-fade {
+    animation: fadeIn 1s ease-in;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  .animate-scroll {
+    animation: scroll 30s linear infinite;
+  }
+
+  .animate-marquee {
+    animation: marquee 15s linear infinite;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── Tab row: hide horizontal scrollbar on mobile ───────────────────── */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Trusted-by marquee: always running, never pausable ─────────────── */
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 48px,
+    #000 calc(100% - 48px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 48px,
+    #000 calc(100% - 48px),
+    transparent 100%
+  );
+}
+
+.marquee-track {
+  animation: scroll 30s linear infinite !important;
+  animation-play-state: running !important;
+  will-change: transform;
+  pointer-events: none;
+  user-select: none;
+}
+
+.marquee-track:hover,
+.marquee-track:focus,
+.marquee-track:active {
+  animation-play-state: running !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: scroll 45s linear infinite !important;
+  }
+}
+
+
+/* Swiper pagination custom styles */
+.swiper-pagination-bullet {
+  @apply bg-orange-500 opacity-50;
+}
+
+.swiper-pagination-bullet-active {
+  @apply opacity-100;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-orange-400 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-orange-500;
+}
+
+/* Details/Summary custom styling */
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details summary {
+  list-style: none;
+}
+
+/* Loading animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Focus styles */
+*:focus-visible {
+  @apply outline-none ring-2 ring-orange-400 ring-offset-2;
+}
+
+/* Image loading placeholder */
+.image-loading {
+  @apply bg-gray-200 animate-pulse;
+}
+
+/* === Swiper Custom Pagination Dots === */
+.swiper-pagination-bullet {
+  background-color: #f97316 !important; /* Website orange */
+  opacity: 0.4;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #f97316 !important;
+  opacity: 1;
+  transform: scale(1.2);
+  transition: all 0.3s ease;
+}
+
+/* Force Swiper wrapper height */
+.swiper-wrapper {
+  height: 21rem !important;
+}
+
+/* ── Industry page: marquee scroll animation ─────────────────────────── */
+@keyframes scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM — "Die-Line" packaging aesthetic
+   Grounded in the subject: corrugated board, kraft paper, box dielines,
+   fold-scores, corner notches, and courier stamps. Replaces the generic
+   rounded-card / soft-shadow kit with structural devices drawn from how
+   a box is actually specified and built.
+   ══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --dieline: #c9a66b;
+}
+
+/* Die-line border: the dashed cut-line printers mark on a box proof */
+.dieline {
+  border: 1.5px dashed var(--dieline);
+}
+.dieline-t { border-top: 1.5px dashed var(--dieline); }
+.dieline-b { border-bottom: 1.5px dashed var(--dieline); }
+
+/* Box-corner notch: clips one corner like a flap tuck, standing in for
+   border-radius. Use notch-tl / notch-br to vary which corner reads as
+   the "open" flap depending on layout direction. */
+.notch-tl {
+  clip-path: polygon(24px 0, 100% 0, 100% 100%, 0 100%, 0 24px);
+}
+.notch-br {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%);
+}
+.notch-sm-tl {
+  clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%, 0 14px);
+}
+.notch-sm-br {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
+}
+
+/* Courier stamp: a rotated ink-stamp badge used sparingly for one callout
+   per section, never repeated as a decorative kit across every card. */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid currentColor;
+  border-radius: 9999px;
+  transform: rotate(-6deg);
+}
+
+/* Flute texture: a subtle corrugated-edge rule used to separate major
+   page sections instead of a plain hairline. */
+.flute-edge {
+  height: 10px;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--dieline) 0,
+    var(--dieline) 2px,
+    transparent 2px,
+    transparent 10px
+  );
+  opacity: 0.5;
+}
+
+/* Kraft paper grain: faint fiber texture for warm-paper surfaces */
+.kraft-grain {
+  background-image: radial-gradient(rgba(74, 52, 35, 0.05) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+/* Single orchestrated hero reveal — a panel unfolding, used once */
+@keyframes foldOpen {
+  0% { transform: perspective(800px) rotateX(-8deg) translateY(14px); opacity: 0; }
+  100% { transform: perspective(800px) rotateX(0deg) translateY(0); opacity: 1; }
+}
+.animate-fold-open {
+  animation: foldOpen 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: top center;
+}
+
+/* Australian green-and-gold stripe: a thin accent used sparingly as a
+   nod to the national colours, alongside the brand orange. */
+.aus-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, #00843D 0 50%, #FFCD00 50% 100%);
+}

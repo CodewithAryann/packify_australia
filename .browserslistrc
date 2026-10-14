@@ -1,0 +1,8 @@
+# Stops Next.js from shipping polyfills/transforms for very old browsers.
+# This removes the "Legacy JavaScript" ~11 KiB the PageSpeed report flagged
+# (Array.prototype.at, Object.hasOwn, String.prototype.trimStart, etc.)
+# These targets still cover ~96%+ of real-world traffic.
+> 0.5%
+last 2 versions
+not dead
+not op_mini all

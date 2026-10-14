@@ -1,0 +1,122 @@
+# Canonical .htaccess — single source of truth (public/.htaccess).
+# Deployed to site root by `next build` (static export copies public/ into out/).
+#
+# NOTE: next.config.js `redirects()` does NOT run — Next.js ignores it entirely
+# when `output: 'export'` is set. Every redirect for this site must live HERE.
+
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # ---------------------------------------------------------------
+  # 0. Collapse duplicate slashes in the URL path.
+  #    Apache serves /blog/post// as a 200 duplicate of /blog/post/
+  #    (the filesystem lookup ignores the extra slash), so Google
+  #    indexes it as "Alternate page with proper canonical tag".
+  #    The canonical tag is doing its job, but a 301 is cheaper than
+  #    a crawl + canonical evaluation on every duplicate.
+  #    Matches on THE_REQUEST so it only fires on a real client
+  #    request, never on an internal subrequest.
+  # ---------------------------------------------------------------
+  RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ (.*)//+(.*)\ HTTP [NC]
+  RewriteRule ^ %1/%2 [R=301,L,NE]
+
+  # ---------------------------------------------------------------
+  # 1. index.html -> directory root.
+  #    MUST come first. /index.html is a REAL FILE (the exported
+  #    homepage), so the !-f guarded rules below never fire on it,
+  #    and it was serving a 200 duplicate of the homepage.
+  # ---------------------------------------------------------------
+  #    The THE_REQUEST guard is important: it makes this fire ONLY when a
+  #    browser/crawler literally asked for "/index.html". When someone requests
+  #    "/", Apache's mod_dir serves index.html via an INTERNAL subrequest —
+  #    THE_REQUEST still reads "GET / ", so these rules stay silent and the
+  #    homepage returns a plain 200. Without this guard, some hosts (cPanel
+  #    among them) re-run mod_rewrite on that subrequest and the homepage
+  #    redirect-loops itself into oblivion.
+  RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
+  RewriteRule ^(.*/)?index\.html$ /%1 [R=301,L]
+
+  # ---------------------------------------------------------------
+  # 2. Legacy .html URLs -> clean URLs.
+  #    Ported from next.config.js, which never executed.
+  #    Unguarded so they fire even if the old .html file still
+  #    exists on the server from a previous deploy.
+  # ---------------------------------------------------------------
+  RewriteRule ^reviews\.html$           /reviews/                    [R=301,L,NC]
+  RewriteRule ^rigid-boxes\.html$       /products/rigid-boxes/       [R=301,L,NC]
+  RewriteRule ^get-quote\.html$         /get-quote/                  [R=301,L,NC]
+  RewriteRule ^how-to-order\.html$      /how-to-order/               [R=301,L,NC]
+  RewriteRule ^magnetic-closure\.html$  /products/magnetic-closure/  [R=301,L,NC]
+  RewriteRule ^dispenser-boxes\.html$   /products/dispenser-boxes/   [R=301,L,NC]
+  RewriteRule ^blog\.html$              /blog/                       [R=301,L,NC]
+  RewriteRule ^privacy\.html$           /privacy/                    [R=301,L,NC]
+  RewriteRule ^refund-returns\.html$    /refund-returns/             [R=301,L,NC]
+  RewriteRule ^cosmetic-boxes\.html$    /products/cosmetic-boxes/    [R=301,L,NC]
+
+  # Wildcard: any remaining /products/*.html -> clean URL
+  RewriteRule ^products/(.+)\.html$     /products/$1/                [R=301,L,NC]
+
+  # ---------------------------------------------------------------
+  # 3. Retired URL: this blog post no longer exists in blog-content.ts.
+  #    Stale HTML from an old deploy is still on the server declaring
+  #    an old canonical ("Alternate page with proper canonical tag").
+  #    ALSO delete the physical folder — see DEPLOY-NOTES.md.
+  # ---------------------------------------------------------------
+  RewriteRule ^blog/future-of-packaging-manufacturing/?$ /blog/ [R=301,L]
+
+  # ---------------------------------------------------------------
+  # 4. Any other stray .html -> clean URL (only if no real file)
+  # ---------------------------------------------------------------
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.+)\.html$ /$1/ [R=301,L]
+
+  # ---------------------------------------------------------------
+  # 5. Enforce trailing slashes (matches trailingSlash: true)
+  # ---------------------------------------------------------------
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !/$
+  RewriteCond %{REQUEST_URI} !\.[\w]+$
+  RewriteRule ^(.+)$ /$1/ [R=301,L]
+
+  # ---------------------------------------------------------------
+  # 6. Serve index.html for directory requests (static export)
+  # ---------------------------------------------------------------
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}/index.html -f
+  RewriteRule ^(.*)$ $1/index.html [L]
+
+  # No SPA fallback: anything unmatched falls through to Apache's 404,
+  # which serves /404.html (see ErrorDocument above).
+</IfModule>
+
+<IfModule mod_headers.c>
+  # ---------------------------------------------------------------
+  # Security headers (site-wide)
+  # ---------------------------------------------------------------
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # ---------------------------------------------------------------
+  # Cache policy
+  # HTML: short cache so content updates show up quickly.
+  # Static assets: 1 year + immutable. Safe because Next.js
+  # fingerprints /_next/static filenames on every build, and
+  # images/fonts change rarely. This is the Apache equivalent of
+  # public/_headers (which only works on Cloudflare Pages/Netlify
+  # and is ignored on this host).
+  # ---------------------------------------------------------------
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+
+  <FilesMatch "\.(js|css|webp|avif|png|jpe?g|gif|svg|ico|woff2?|ttf|mp4)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
